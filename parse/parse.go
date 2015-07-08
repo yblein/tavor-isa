@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/BurntSushi/toml"
+	"github.com/zimmski/tavor"
 	"github.com/zimmski/tavor/token"
 	"github.com/zimmski/tavor/token/lists"
 	"github.com/zimmski/tavor/token/primitives"
@@ -15,7 +16,7 @@ import (
 // Config represents the configuration of an ISA
 type Config struct {
 	Instructions []string
-	Variables    map[string][]string
+	Variables       map[string][]string
 }
 
 // Parse parses the given configuration file and returns a Tavor token out of it
@@ -64,7 +65,9 @@ func Parse(file string) (token.Token, error) {
 		l = append(l, t)
 	}
 
-	return lists.NewOne(l...), nil
+	one := lists.NewOne(l...)
+	all := lists.NewAll(one, primitives.NewConstantString("\n"))
+	return lists.NewRepeat(all, 1, int64(tavor.MaxRepeat)), nil
 }
 
 func parseInstructions(file string, variables map[string]token.Token) (token.Token, error) {

@@ -9,6 +9,7 @@ import (
 
 	"github.com/yblein/tavor-isa/parse"
 
+	"github.com/zimmski/tavor"
 	"github.com/zimmski/tavor/fuzz/filter"
 	"github.com/zimmski/tavor/fuzz/strategy"
 	//"github.com/zimmski/tavor/graph"
@@ -44,6 +45,8 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
+
+	tavor.MaxRepeat = 100
 
 	file := flag.Arg(0)
 	root, err := parse.Parse(file)
