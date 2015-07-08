@@ -15,7 +15,7 @@ import (
 // Config represents the configuration of an ISA
 type Config struct {
 	Instructions []string
-	Arrays       map[string][]string
+	Variables    map[string][]string
 }
 
 // Parse parses the given configuration file and returns a Tavor token out of it
@@ -30,15 +30,15 @@ func Parse(file string) (token.Token, error) {
 		return nil, err
 	}
 
-	// build arrays out from the configuration file
-	arrays := make(map[string]token.Token)
-	for k, a := range conf.Arrays {
+	// build variables out from the configuration file
+	variables := make(map[string]token.Token)
+	for k, a := range conf.Variables {
 		var l []token.Token
 		//for _, s := range a {
 		//	l = append(l, primitives.NewConstantString(s))
 		//}
 
-		// use only the boundary values (first, mid, last) of the array for now
+		// use only the boundary values (first, mid, last) of the variable for now
 		if len(a) >= 1 {
 			l = append(l, primitives.NewConstantString(a[0]))
 			if len(a) >= 3 {
@@ -48,7 +48,7 @@ func Parse(file string) (token.Token, error) {
 				l = append(l, primitives.NewConstantString(a[len(a)-1]))
 			}
 		}
-		arrays[k] = lists.NewOne(l...)
+		variables[k] = lists.NewOne(l...)
 	}
 
 	dir := filepath.Dir(file)
@@ -57,7 +57,7 @@ func Parse(file string) (token.Token, error) {
 	// parse all instruction files
 	for _, instructions := range conf.Instructions {
 		file := filepath.Join(dir, instructions)
-		t, err := parseInstructions(file, arrays)
+		t, err := parseInstructions(file, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -67,7 +67,7 @@ func Parse(file string) (token.Token, error) {
 	return lists.NewOne(l...), nil
 }
 
-func parseInstructions(file string, arrays map[string]token.Token) (token.Token, error) {
+func parseInstructions(file string, variables map[string]token.Token) (token.Token, error) {
 	buf, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil, err
@@ -99,10 +99,10 @@ func parseInstructions(file string, arrays map[string]token.Token) (token.Token,
 			currInstr = append(currInstr, primitives.NewRangeInt(from, to))
 		case itemKey:
 			key := i.val[1:]
-			if array, ok := arrays[key]; ok {
-				currInstr = append(currInstr, array.Clone()) // TODO: is this clone necessary?
+			if variable, ok := variables[key]; ok {
+				currInstr = append(currInstr, variable.Clone()) // TODO: is this clone necessary?
 			} else {
-				err := fmt.Errorf("error: %s:%d: array %s not found", file, l.lineNumber(), key)
+				err := fmt.Errorf("error: %s:%d: variable %s not found", file, l.lineNumber(), key)
 				return nil, err
 			}
 		case itemError:
