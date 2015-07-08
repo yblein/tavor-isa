@@ -1,5 +1,6 @@
 # tavor-isa
 
 ```
-go run main.go format_example/conf.toml
+go build
+./tavor-isa format_example/riscv64/config.toml
 ```
