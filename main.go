@@ -1,12 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/exec"
 	"time"
-	"flag"
 
 	"github.com/yblein/tavor-isa/parse"
 
@@ -18,8 +19,8 @@ import (
 )
 
 const (
-	DefaultStrategyName = "random"
-	TemporaryFile = "TAVOR_FUZZ_FILE"
+	DefaultStrategyName    = "random"
+	DefaultMaxInstructions = 300
 )
 
 func printStrategies() {
@@ -36,7 +37,8 @@ func printStrategies() {
 func main() {
 	seed := flag.Int64("seed", -1, "seed for randomness")
 	strategyName := flag.String("strategy", DefaultStrategyName, "fuzzing strategy")
-	execFlag := flag.String("exec", "", "execute this script; tests are produced into a temporary file which is defined using the environment variable TAVOR_FUZZ_FILE")
+	execFlag := flag.String("exec", "", "execute this script with the test file as argument")
+	maxInstructions := flag.Int("max-instructions", DefaultMaxInstructions, "maximum number of instructions per test program")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "usage: %s <ISA configuration file>\nOptionnal flags:\n", os.Args[0])
@@ -51,16 +53,21 @@ func main() {
 		os.Exit(1)
 	}
 
-	outputFilename := ""
+	var outputFile *os.File
 	if *execFlag != "" {
-		outputFilename = os.Getenv(TemporaryFile)
-		if outputFilename == "" {
-			fmt.Fprintln(os.Stderr, "error: the environment variable", TemporaryFile, "must be set when using the `execFlag` option")
+		var err error
+		outputFile, err = ioutil.TempFile(os.TempDir(), "tavor-isa")
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(2)
 		}
+		defer func() {
+			outputFile.Close()
+			os.Remove(outputFile.Name())
+		}()
 	}
 
-	tavor.MaxRepeat = 100
+	tavor.MaxRepeat = *maxInstructions
 
 	file := flag.Arg(0)
 	root, err := parse.Parse(file)
@@ -105,20 +112,15 @@ func main() {
 		if *execFlag == "" {
 			fmt.Println(root.String())
 		} else {
-			outputFile, err := os.Create(outputFilename)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
-				os.Exit(7)
-			}
+			outputFile.Seek(0, 0)
+			n, _ := outputFile.WriteString(root.String())
+			outputFile.Truncate(int64(n))
 
-			outputFile.WriteString(root.String())
-
-			// exec the command
-			cmd := exec.Command(*execFlag)
+			cmd := exec.Command(*execFlag, outputFile.Name())
 			err = cmd.Run()
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "Error when executing the command:", err)
-				os.Exit(8)
+				fmt.Fprintf(os.Stderr, "Error when executing the command `%s %s`: %s\n", *execFlag, outputFile.Name(), err)
+				os.Exit(7)
 			}
 		}
 
