@@ -4,7 +4,7 @@ addiw     @r, @r, $i12
 addw      @r, @r, @r
 and       @r, @r, @r
 andi      @r, @r, $i12
-auipc     @r, @r, $u20
+auipc     @r, $u20
 #beq       @r, @r, $i12
 #bge       @r, @r, $i12
 #bgeu      @r, @r, $i12
@@ -20,7 +20,7 @@ lbu       @r, $i12(@r)
 ld        @r, $i12(@r)
 lh        @r, $i12(@r)
 lhu       @r, $i12(@r)
-lui       @r, @r, $u20
+lui       @r, $u20
 lw        @r, $i12(@r)
 lwu       @r, $i12(@r)
 or        @r, @r, @r

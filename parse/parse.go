@@ -97,7 +97,7 @@ func parseInstructions(file string, variables map[string]token.Token) (token.Tok
 				to = (1 << (uint(nbBits) - 1)) - 1
 			} else {
 				from = 0
-				to = 1 << uint(nbBits)
+				to = (1 << uint(nbBits)) - 1
 			}
 			currInstr = append(currInstr, primitives.NewRangeInt(from, to))
 		case itemKey:

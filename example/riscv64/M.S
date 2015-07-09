@@ -5,7 +5,7 @@ mulhsu @r, @r, @r
 div    @r, @r, @r
 divu   @r, @r, @r
 divw   @r, @r, @r
-divux  @r, @r, @r
+divuw  @r, @r, @r
 rem    @r, @r, @r
 remu   @r, @r, @r
 remw   @r, @r, @r
