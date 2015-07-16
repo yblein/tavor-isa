@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	DefaultStrategyName    = "random"
+	DefaultStrategyName    = "TokenCoverage"
 	DefaultMaxInstructions = 300
 )
 
