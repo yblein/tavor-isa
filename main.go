@@ -24,7 +24,7 @@ const (
 )
 
 func printStrategies() {
-	fmt.Fprintln(os.Stderr, "Available strategies:")
+	fmt.Fprintln(os.Stderr, "\nAvailable fuzzing strategies:")
 	for _, s := range strategy.List() {
 		if s == DefaultStrategyName {
 			fmt.Fprintln(os.Stderr, "-", s, "(default)")
@@ -35,21 +35,23 @@ func printStrategies() {
 }
 
 func main() {
-	seed := flag.Int64("seed", -1, "seed for randomness")
-	strategyName := flag.String("strategy", DefaultStrategyName, "fuzzing strategy")
-	execFlag := flag.String("exec", "", "execute this script with the test file as argument")
-	maxInstructions := flag.Int("max-instructions", DefaultMaxInstructions, "maximum number of instructions per test program")
+	flagSet := flag.NewFlagSet("flags", flag.ExitOnError)
 
-	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "usage: %s <ISA configuration file>\nOptionnal flags:\n", os.Args[0])
-		flag.PrintDefaults()
+	seed := flagSet.Int64("seed", -1, "seed for randomness")
+	strategyName := flagSet.String("strategy", DefaultStrategyName, "fuzzing strategy")
+	execFlag := flagSet.String("exec", "", "execute this script with the test file as argument")
+	maxInstructions := flagSet.Int("max-instructions", DefaultMaxInstructions, "maximum number of instructions per test program")
+
+	flagSet.Usage = func() {
+		fmt.Fprintf(os.Stderr, "usage: %s <ISA configuration file>\n\nOptionnal flags:\n", os.Args[0])
+		flagSet.PrintDefaults()
 		printStrategies()
 	}
 
-	flag.Parse()
+	flagSet.Parse(os.Args[1:])
 
-	if len(flag.Args()) < 1 {
-		flag.Usage()
+	if len(flagSet.Args()) < 1 {
+		flagSet.Usage()
 		os.Exit(1)
 	}
 
@@ -69,7 +71,7 @@ func main() {
 
 	tavor.MaxRepeat = *maxInstructions
 
-	file := flag.Arg(0)
+	file := flagSet.Arg(0)
 	root, err := parse.Parse(file)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
