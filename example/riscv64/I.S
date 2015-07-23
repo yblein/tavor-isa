@@ -30,7 +30,7 @@ rdinstret @r
 rdtime    @r
 sb        @r, $i12(@r)
 sbreak
-#scall
+scall
 sd        @r, $i12(@r)
 sh        @r, $i12(@r)
 sll       @r, @r, @r
