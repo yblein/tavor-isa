@@ -1,5 +1,5 @@
 # First release of tavor-isa
-Here is the first release of my summer project! As a remainder this
+[Here is](https://github.com/yblein/tavor-isa/tree/v0.1) the first release of my summer project! As a remainder this
 project aims at fuzzing a CPU instruction set thanks to the Tavor framework.
 This first release introduces a new format to describe instruction sets as well
 as new fuzzing strategy extracting test programs from this specification.

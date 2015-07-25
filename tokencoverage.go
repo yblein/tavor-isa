@@ -12,6 +12,8 @@ import (
 	"github.com/zimmski/tavor/token/primitives"
 )
 
+// TokenCoverage implements a fuzzing strategy that produces a covering of all the tokens of the token graph.
+// The strategy produces a set of tests such that all the tokens of the token graphs have been covered by at least one test.
 type TokenCoverage struct {
 	root         token.Token
 	covered      map[token.Token]struct{}
@@ -94,7 +96,7 @@ func (s *TokenCoverage) bestUncoveredPath(tok token.Token) (uint, []uint) {
 		// find the permutation leading to the highest number of uncovered tokens
 		l := t.InternalLen()
 
-		var bestPermutation uint = 0
+		var bestPermutation uint
 		var bestNbUncovered uint
 		var bestPath []uint
 
@@ -173,14 +175,10 @@ func (s *TokenCoverage) bestUncoveredPath(tok token.Token) (uint, []uint) {
 	default:
 		panic(fmt.Errorf("bestUncoveredPath not implemented for %#v", t))
 	}
-
-	panic("unreachable")
-
-	return 0, []uint{}
 }
 
 func (s *TokenCoverage) setPath(tok token.Token) {
-	tok.Permutation(s.path[0])
+	_ = tok.Permutation(s.path[0])
 	s.path = s.path[1:]
 	s.covered[tok] = struct{}{}
 

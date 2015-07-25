@@ -19,14 +19,14 @@ import (
 )
 
 const (
-	DefaultStrategyName    = "TokenCoverage"
-	DefaultMaxInstructions = 300
+	defaultStrategyName    = "TokenCoverage"
+	defaultMaxInstructions = 300
 )
 
 func printStrategies() {
 	fmt.Fprintln(os.Stderr, "\nAvailable fuzzing strategies:")
 	for _, s := range strategy.List() {
-		if s == DefaultStrategyName {
+		if s == defaultStrategyName {
 			fmt.Fprintln(os.Stderr, "-", s, "(default)")
 		} else {
 			fmt.Fprintln(os.Stderr, "-", s)
@@ -38,9 +38,9 @@ func main() {
 	flagSet := flag.NewFlagSet("flags", flag.ExitOnError)
 
 	seed := flagSet.Int64("seed", -1, "seed for randomness")
-	strategyName := flagSet.String("strategy", DefaultStrategyName, "fuzzing strategy")
+	strategyName := flagSet.String("strategy", defaultStrategyName, "fuzzing strategy")
 	execFlag := flagSet.String("exec", "", "execute this script with the test file as argument")
-	maxInstructions := flagSet.Int("max-instructions", DefaultMaxInstructions, "maximum number of instructions per test program")
+	maxInstructions := flagSet.Int("max-instructions", defaultMaxInstructions, "maximum number of instructions per test program")
 
 	flagSet.Usage = func() {
 		fmt.Fprintf(os.Stderr, "usage: %s <ISA configuration file>\n\nOptionnal flags:\n", os.Args[0])
@@ -48,7 +48,7 @@ func main() {
 		printStrategies()
 	}
 
-	flagSet.Parse(os.Args[1:])
+	_ = flagSet.Parse(os.Args[1:])
 
 	if len(flagSet.Args()) < 1 {
 		flagSet.Usage()
@@ -64,8 +64,8 @@ func main() {
 			os.Exit(2)
 		}
 		defer func() {
-			outputFile.Close()
-			os.Remove(outputFile.Name())
+			_ = outputFile.Close()
+			_ = os.Remove(outputFile.Name())
 		}()
 	}
 
@@ -114,9 +114,9 @@ func main() {
 		if *execFlag == "" {
 			fmt.Println(root.String())
 		} else {
-			outputFile.Seek(0, 0)
+			_, _ = outputFile.Seek(0, 0)
 			n, _ := outputFile.WriteString(root.String())
-			outputFile.Truncate(int64(n))
+			_ = outputFile.Truncate(int64(n))
 
 			cmd := exec.Command(*execFlag, outputFile.Name())
 			err = cmd.Run()
