@@ -20,7 +20,7 @@ import (
 
 const (
 	defaultStrategyName    = "TokenCoverage"
-	defaultMaxInstructions = 300
+	defaultMaxInstructions = 3000
 )
 
 func printStrategies() {

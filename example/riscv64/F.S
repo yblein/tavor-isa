@@ -1,5 +1,5 @@
-flw       @f, @f, $i12
-fsw       @f, @f, $i12
+flw       @f, $i12(@r)
+fsw       @f, $i12(@r)
 fmadd.s   @f, @f, @f, @f
 fmsub.s   @f, @f, @f, @f
 fnmsub.s  @f, @f, @f, @f
@@ -14,25 +14,25 @@ fsgnjn.s  @f, @f, @f
 fsgnjx.s  @f, @f, @f
 fmin.s    @f, @f, @f
 fmax.s    @f, @f, @f
-fcvt.w.s  @f, @f
-fcvt.wu.s @f, @f
-fmv.x.s   @f, @f
-feq.s     @f, @f, @f
-flt.s     @f, @f, @f
-fle.s     @f, @f, @f
-fclass.s  @f, @f
-fcvt.s.w  @f, @f
-fcvt.s.wu @f, @f
-fmv.s.x   @f, @f
-frcsr     @f
-frrm      @f
-frflags   @f
-fscsr     @f, @f
-fsrm      @f, @f
-fsflags   @f, @f
-fsrmi     @f, $i12
-fsflagsi  @f, $i12
-fcvt.l.s  @f, @f
-fcvt.lu.s @f, @f
-fcvt.s.l  @f, @f
-fcvt.s.lu @f, @f
+fcvt.w.s  @r, @f
+fcvt.wu.s @r, @f
+fmv.x.s   @r, @f
+feq.s     @r, @f, @f
+flt.s     @r, @f, @f
+fle.s     @r, @f, @f
+fclass.s  @r, @f
+fcvt.s.w  @f, @r
+fcvt.s.wu @f, @r
+fmv.s.x   @f, @r
+frcsr     @r
+frrm      @r
+frflags   @r
+fscsr     @r, @r
+fsrm      @r, @r
+fsflags   @r, @r
+#fsrmi     @r, $i12
+#fsflagsi  @r, $i12
+fcvt.l.s  @r, @f
+fcvt.lu.s @r, @f
+fcvt.s.l  @f, @r
+fcvt.s.lu @f, @r
