@@ -23,7 +23,7 @@ r = ["x0", "x1", ..., "x31"]
 ```
 The special keys starting with a dollar sign like `$i12` are predefined.
 
-You can find a more complete example in [example/riscv64](example/riscv64). This
+You can find a more complete example in [example/riscv64](/example/riscv64). This
 example is a beginning of specification for the RISCV64 instruction set,
 including the base integer instruction set and the extension for multiplication
 and division.
@@ -52,7 +52,7 @@ With only 5 instructions, this program covers several corner cases of the
 The RISCV64 example comes with a script that automatically executes the
 generated program with the [spike emulator](https://github.com/riscv/riscv-isa-sim).
 The test passes is the emulator terminates correctly. See the
-[README](README.md) for more information on building and running
+[README](/README.md) for more information on building and running
 tavor-isa.
 
 ## Limitations and Future Work
