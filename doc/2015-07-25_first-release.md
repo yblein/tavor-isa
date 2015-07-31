@@ -21,7 +21,10 @@ instructions = ["I.S"]
 [variables]
 r = ["x0", "x1", ..., "x31"]
 ```
-The special keys starting with a dollar sign like `$i12` are predefined.
+
+On the contraty to `@` values that are read from the configuration file, the special keys starting with a dollar sign (e.g., `$i12`) are predefined:
+`$i` followed by a number `n` will produce a `n` bits random integer value.
+Likewise, `$u` will produce an unsigned random integer.
 
 You can find a more complete example in [example/riscv64](/example/riscv64). This
 example is a beginning of specification for the RISCV64 instruction set,
