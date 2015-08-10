@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# currently not working (require priviledge instructions)
-exit 200
-
 # Runs the riscv64 test case given in argument
 # The TOP variable must be set to the root of the riscv installation
 
@@ -19,18 +16,37 @@ fi
 f=$(realpath $1)
 
 # add test header and footer
-echo "#include \"riscv_test.h\"
+echo "
+#include \"riscv_test.h\"
 #include \"test_macros.h\"
-RVTEST_RV64U
+RVTEST_RV64S
 RVTEST_CODE_BEGIN
+
+#ifdef __MACHINE_MODE
+  #define sscratch mscratch
+  #define sstatus mstatus
+  #define scause mcause
+  #define sepc mepc
+  #define stvec_handler mtvec_handler
+#endif
+
 $(cat $f)
+
 RVTEST_PASS
+
+  .align 3
+stvec_handler:
+  csrr t0, sepc
+  addi t0, t0, 4
+  csrw sepc, t0
+  sret
+
 RVTEST_CODE_END" > $f.S
 
 riscv64-unknown-elf-gcc -static -fpic -fvisibility=hidden -nostdlib -nostartfiles -Wa,-march=RVIMAFDXhwacha -I $TOP/riscv-tools/riscv-tests/env/p -I $TOP/riscv-tools/riscv-tests/isa/macros/scalar -T $TOP/riscv-tools/riscv-tests/env/p/link.ld "$f.S" -o "$f.bin" \
 	&& elf2hex 16 8192 "$f.bin" > "$f.hex" \
 	&& cd $TOP/rocket-chip/emulator \
-	&& ./emulator-DefaultCPPConfig +dramsim +max-cycles=100000 +loadmem="$f.hex" none \
+	&& ./emulator-Top-DefaultCPPConfig +dramsim +max-cycles=100000 +loadmem="$f.hex" none \
 	&& rm "$f.S" "$f.bin" "$f.hex" \
 	&& exit 0
 
