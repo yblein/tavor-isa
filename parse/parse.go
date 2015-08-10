@@ -16,7 +16,7 @@ import (
 // Config represents the configuration of an ISA
 type Config struct {
 	Instructions []string
-	Variables       map[string][]string
+	Variables    map[string][]string
 }
 
 // Parse parses the given configuration file and returns a Tavor token out of it
@@ -88,7 +88,7 @@ func parseInstructions(file string, variables map[string]token.Token) (token.Tok
 			currInstr = nil
 		case itemText:
 			currInstr = append(currInstr, primitives.NewConstantString(i.val))
-		case itemSpecial:
+		case itemInteger:
 			signed := i.val[1] == 'i'
 			nbBits, _ := strconv.Atoi(i.val[2:])
 			var from, to int
@@ -100,10 +100,12 @@ func parseInstructions(file string, variables map[string]token.Token) (token.Tok
 				to = (1 << uint(nbBits)) - 1
 			}
 			currInstr = append(currInstr, primitives.NewRangeInt(from, to))
+		case itemLabel:
+			currInstr = append(currInstr, primitives.NewConstantString("$l"))
 		case itemKey:
 			key := i.val[1:]
 			if variable, ok := variables[key]; ok {
-				currInstr = append(currInstr, variable.Clone()) // TODO: is this clone necessary?
+				currInstr = append(currInstr, variable.Clone())
 			} else {
 				err := fmt.Errorf("error: %s:%d: variable %s not found", file, l.lineNumber(), key)
 				return nil, err

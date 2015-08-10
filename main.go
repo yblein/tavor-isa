@@ -111,11 +111,13 @@ func main() {
 	}
 
 	for i := range continueFuzzing {
+		s := parse.PostProcess(root.String(), r)
+
 		if *execFlag == "" {
-			fmt.Println(root.String())
+			fmt.Println(s)
 		} else {
 			_, _ = outputFile.Seek(0, 0)
-			n, _ := outputFile.WriteString(root.String())
+			n, _ := outputFile.WriteString(s)
 			_ = outputFile.Truncate(int64(n))
 
 			cmd := exec.Command(*execFlag, outputFile.Name())

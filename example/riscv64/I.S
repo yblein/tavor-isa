@@ -5,15 +5,15 @@ addw      @r, @r, @r
 and       @r, @r, @r
 andi      @r, @r, $i12
 auipc     @r, $u20
-#beq       @r, @r, $i12
-#bge       @r, @r, $i12
-#bgeu      @r, @r, $i12
-#blt       @r, @r, $i12
-#bltu      @r, @r, $i12
-#bne       @r, @r, $i12
+beq       @r, @r, $l
+bge       @r, @r, $l
+bgeu      @r, @r, $l
+blt       @r, @r, $l
+bltu      @r, @r, $l
+bne       @r, @r, $l
 fence
 fence.i
-#jal       @r, @r, $u20
+jal       @r, $l
 #jalr      @r, @r, $i12
 lb        @r, $i12(@r)
 lbu       @r, $i12(@r)

@@ -38,7 +38,8 @@ const (
 	itemError itemType = iota
 
 	itemText
-	itemSpecial
+	itemInteger
+	itemLabel
 	itemKey
 
 	itemNewLine
@@ -212,13 +213,17 @@ func lexKey(l *lexer) stateFn {
 
 // lexKey scans the content of a special token where the $ mark is already scanned.
 func lexSpecial(l *lexer) stateFn {
-	if !l.accept("iu") {
-		return l.errorf("expected 'i' or 'u' after $ character")
+	switch l.next() {
+	case 'i', 'u':
+		if l.acceptRun("0123456789") <= 0 {
+			return l.errorf("expected integer size after a $i or $u sequence")
+		}
+		l.emit(itemInteger)
+	case 'l':
+		l.emit(itemLabel)
+	default:
+		return l.errorf("expected 'i', 'u' or 'l' after $ character")
 	}
-	if l.acceptRun("0123456789") <= 0 {
-		return l.errorf("expected integer size in $ sequence")
-	}
-	l.emit(itemSpecial)
 	return lexText
 }
 
